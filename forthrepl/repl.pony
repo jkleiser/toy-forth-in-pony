@@ -32,7 +32,7 @@ class ForthRepl is ReadlineNotify
   fun ref _interpret(line: String) =>
     for each_token in line.split(" ").values() do
     	try
-        _execute(_dict(each_token))
+        _execute(_dict(each_token)?)
       else
         _number(each_token)
       end
@@ -40,21 +40,21 @@ class ForthRepl is ReadlineNotify
 
   fun ref _execute(func: AnyMethod) =>
     match func
-    | let fun_ref: PartialFunRef => try fun_ref() else _env.out.print("Stack underflow") end
+    | let fun_ref: PartialFunRef => try fun_ref()? else _env.out.print("Stack underflow") end
     | let fun_box: FunBox => fun_box()
     end
 
   fun ref _number(token: String) =>
     try
-      _stack.push(token.i64())
+      _stack.push(token.i64()?)
     else
       _env.out.print(token + " ?")
     end
 
-  fun ref _add() ? => _stack.push(_stack.pop() + _stack.pop())
-  fun ref _sub() ? => _stack.push(_stack.pop() - _stack.pop())
-  fun ref _mul() ? => _stack.push(_stack.pop() * _stack.pop())
-  fun ref _div() ? => _stack.push(_stack.pop() / _stack.pop())
+  fun ref _add() ? => _stack.push(_stack.pop()? + _stack.pop()?)
+  fun ref _sub() ? => _stack.push(_stack.pop()? - _stack.pop()?)
+  fun ref _mul() ? => _stack.push(_stack.pop()? * _stack.pop()?)
+  fun ref _div() ? => _stack.push(_stack.pop()? / _stack.pop()?)
   
   fun _print() =>
     for n in _stack.reverse().values() do
